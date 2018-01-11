@@ -365,3 +365,18 @@ fn bench_coord_range(b: &mut Bencher) {
 fn bench_coord_range_iter(b: &mut Bencher) {
     b.iter(|| coord_range_iter());
 }
+
+#[bench]
+fn bench_each_in_range(b: &mut Bencher) {
+    b.iter(||
+           with_test_points(|c| {
+               c.for_each_in_range(6, |x| assert!(x.distance(c) < 10));
+           }));
+}
+#[bench]
+fn bench_each_in_range_iter(b: &mut Bencher) {
+    b.iter(||
+           with_test_points(|c| {
+               assert!(c.iter_in_range(6).all(|x| x.distance(c) < 10));
+           }));
+}
