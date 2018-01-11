@@ -57,6 +57,7 @@
 // Implement Eq between (i, i) and (i, i, i) by using to_coordinate
 
 #![cfg_attr(feature="nightly", feature(conservative_impl_trait))]
+#![feature(test)]
 
 #![crate_name = "hex2d"]
 #![crate_type = "lib"]
@@ -96,7 +97,10 @@ I : num::Signed +
     One + Zero + Copy { }
 
 #[cfg(test)]
-mod test;
+mod tests;
+
+#[cfg(bench)]
+#[macro_use] extern crate bencher;
 
 /// Coordinate on 2d hexagonal grid
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug, Ord, PartialOrd, RustcDecodable)]

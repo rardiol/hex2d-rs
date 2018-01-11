@@ -1,6 +1,11 @@
 // Copyright 2014 Dawid Ciężarkiewicz
 // See LICENSE file for more information
 
+#![feature(test)]
+
+extern crate test;
+use self::test::Bencher;
+
 use super::*;
 use super::Spacing::*;
 
@@ -108,6 +113,17 @@ fn coord_range() {
         assert_eq!(19, c.range(2).len());
         assert_eq!(37, c.range(3).len());
         assert_eq!((5 + 6 + 7 + 8 ) * 2 + 9, c.range(4).len());
+    });
+}
+
+#[test]
+fn coord_range_iter() {
+    with_test_points(|c| {
+        assert_eq!(1, c.range(0).len());
+        assert_eq!(7, c.range(1).len());
+        assert_eq!(19, c.range(2).len());
+        assert_eq!(37, c.range(3).len());
+        assert_eq!((5 + 6 + 7 + 8) * 2 + 9, c.range(4).len());
     });
 }
 
@@ -340,3 +356,12 @@ fn simple_line_to() {
     });
 }
 
+#[bench]
+fn bench_coord_range(b: &mut Bencher) {
+    b.iter(|| coord_range());
+}
+
+#[bench]
+fn bench_coord_range_iter(b: &mut Bencher) {
+    b.iter(|| coord_range_iter());
+}

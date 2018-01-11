@@ -21,3 +21,6 @@ nightly = []
 num = "0.1"
 rand = "0.4"
 rustc-serialize = "0.3"
+
+[dev-dependencies]
+bencher = "0.1.5"
