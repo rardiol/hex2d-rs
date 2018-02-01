@@ -730,6 +730,7 @@ impl<I : Integer> Coordinate<I> {
     }
 
     /// All coordinates in radius `r`
+    #[cfg(not(feature="nightly"))]
     pub fn range(&self, r : I) -> Vec<Coordinate<I>>
     where
         for <'a> &'a I: Add<&'a I, Output = I>
@@ -742,7 +743,17 @@ impl<I : Integer> Coordinate<I> {
         res
     }
 
+    /// All coordinates in radius `r`
+    #[cfg(feature="nightly")]
+    pub fn range(&self, r : I) -> Vec<Coordinate<I>>
+    where
+        for <'a> &'a I: Add<&'a I, Output = I>
+    {
+        self.range_iter(r).collect()
+    }
+
     /// Execute `f` for all coordinates in radius `r`
+    #[cfg(not(feature="nightly"))]
     pub fn for_each_in_range<F>(&self, r : I, mut f : F)
         where
         F : FnMut(Coordinate<I>),
@@ -754,6 +765,17 @@ impl<I : Integer> Coordinate<I> {
                     y: self.y + y,
                 });
             }
+        }
+    }
+
+    /// Execute `f` for all coordinates in radius `r`
+    #[cfg(feature="nightly")]
+    pub fn for_each_in_range<F>(&self, r : I, mut f : F)
+    where
+        F : FnMut(Coordinate<I>),
+    for <'a> &'a I: Add<&'a I, Output = I> {
+        for it in self.range_iter(r) {
+            f(it)
         }
     }
 
