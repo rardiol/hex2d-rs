@@ -14,6 +14,8 @@ license = "MIT"
 name = "hex2d"
 path = "src/lib.rs"
 
+[features]
+nightly = []
 
 [dependencies]
 num = "0.1"
