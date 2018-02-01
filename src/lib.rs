@@ -757,6 +757,22 @@ impl<I : Integer> Coordinate<I> {
         }
     }
 
+    /// Iterator for all coordinates in radius `r`
+    #[cfg(feature="nightly")]
+    pub fn range_iter(self, r: I) -> impl Iterator<Item = Coordinate<I>>
+    where
+        for<'a> &'a I: Add<&'a I, Output = I>,
+    {
+        range_inclusive(-r, r)
+            .flat_map(move |x|
+                      range_inclusive(max(-r, -x - r), min(r, -x + r))
+                      .map(move |y|
+                           Coordinate {
+                               x: self.x + x,
+                               y: self.y + y,
+                           }))
+    }
+
     /// A ring of radius `r`, starting in a corner in a given Direction
     ///
     /// Example: Elements in order for Ring of radius 2, Direction ZX, CCW
