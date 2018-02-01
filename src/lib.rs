@@ -56,6 +56,8 @@
 // TODO:
 // Implement Eq between (i, i) and (i, i, i) by using to_coordinate
 
+#![cfg_attr(feature="nightly", feature(conservative_impl_trait))]
+
 #![crate_name = "hex2d"]
 #![crate_type = "lib"]
 
