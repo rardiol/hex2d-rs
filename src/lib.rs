@@ -69,6 +69,7 @@ extern crate rustc_serialize;
 
 use num::{Float, One, Zero};
 use num::iter::range_inclusive;
+use std::iter;
 use std::ops::{Add, Sub, Neg};
 use std::cmp::{max, min};
 
@@ -530,6 +531,31 @@ impl<I : Integer> Coordinate<I> {
         });
 
         res
+    }
+
+    /// Construct a straight line to a `dest`
+    #[cfg(feature="nightly")]
+    pub fn line_to_iter(&self, dest : Coordinate<I>) -> impl Iterator<Item = Coordinate<I>>
+    where
+        for <'a> &'a I: Add<&'a I, Output = I>
+    {
+        if *self == dest {
+            return iter::once(*self);
+        }
+
+        let n = self.distance(dest);
+
+        let ax = self.x.to_f32().unwrap();
+        let ay = self.y.to_f32().unwrap();
+        let bx = dest.x.to_f32().unwrap();
+        let by = dest.y.to_f32().unwrap();
+
+        range_inclusive(Zero::zero(), n).map(move |i| {
+            let d = i.to_f32().unwrap() / n.to_f32().unwrap();
+            let x = ax + (bx - ax) * d;
+            let y = ay + (by - ay) * d;
+            Coordinate::nearest(x, y)
+        })
     }
 
     /// Construct a straight line to a `dest`
