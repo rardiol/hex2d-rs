@@ -459,154 +459,22 @@ impl<I : Integer> Coordinate<I> {
     }
 
     /// Iterator over each coordinate in straight line from `self` to `dest`
-    pub fn line_to_iter(&self, dest: Coordinate<I>) -> LineTo<I> {
+    pub fn line_to(&self, dest: Coordinate<I>) -> LineTo<I> {
         LineTo(self.line_to_iter_gen(dest))
     }
 
     /// Iterator over each coordinate in straight line from `self` to `dest`
     ///
     /// Skip points on the border of two tiles
-    pub fn line_to_lossy_iter(&self, dest: Coordinate<I>) -> LineToLossy<I> {
+    pub fn line_to_lossy(&self, dest: Coordinate<I>) -> LineToLossy<I> {
         LineToLossy(self.line_to_iter_gen(dest))
     }
 
     /// Iterator over each coordinate in straight line from `self` to `dest`
     ///
     /// On edge condition the pair contains different members, otherwise it's the same.
-    pub fn line_to_with_edge_detection_iter(&self, dest: Coordinate<I>) -> LineToWithEdgeDetection<I> {
+    pub fn line_to_with_edge_detection(&self, dest: Coordinate<I>) -> LineToWithEdgeDetection<I> {
         LineToWithEdgeDetection(self.line_to_iter_gen(dest))
-    }
-
-    /// Execute `f` for each coordinate in straight line from `self` to `dest`
-    pub fn for_each_in_line_to<F>(&self, dest : Coordinate<I>, mut f : F)
-        where
-        F : FnMut(Coordinate<I>),
-        for <'a> &'a I: Add<&'a I, Output = I>
-        {
-            if *self == dest {
-                f(*self);
-                return;
-            }
-
-            let n = self.distance(dest);
-
-            let ax = self.x.to_f32().unwrap();
-            let ay = self.y.to_f32().unwrap();
-            let bx = dest.x.to_f32().unwrap();
-            let by = dest.y.to_f32().unwrap();
-
-            for i in range_inclusive(Zero::zero(), n) {
-                let d = i.to_f32().unwrap() / n.to_f32().unwrap();
-                let x = ax + (bx - ax) * d;
-                let y = ay + (by - ay) * d;
-                let c = Coordinate::nearest(x, y);
-                f(c);
-            }
-    }
-
-    /// Execute `f` for each coordinate in straight line from `self` to `dest`
-    ///
-    /// Skip points on the border of two tiles
-    pub fn for_each_in_line_to_lossy<F>(&self, dest : Coordinate<I>, mut f : F)
-        where
-        F : FnMut(Coordinate<I>),
-        for <'a> &'a I: Add<&'a I, Output = I>
-        {
-            if *self == dest {
-                f(*self);
-                return;
-            }
-
-            let n = self.distance(dest);
-
-            let ax = self.x.to_f32().unwrap();
-            let ay = self.y.to_f32().unwrap();
-            let bx = dest.x.to_f32().unwrap();
-            let by = dest.y.to_f32().unwrap();
-
-            for i in range_inclusive(Zero::zero(), n) {
-                let d = i.to_f32().unwrap() / n.to_f32().unwrap();
-                let x = ax + (bx - ax) * d;
-                let y = ay + (by - ay) * d;
-                let c = Coordinate::nearest_lossy(x, y);
-                if let Some(c) = c {
-                    f(c);
-                }
-            }
-    }
-
-    /// Execute `f` for pairs of coordinates in straight line from `self` to `dest`
-    ///
-    /// On edge condition the pair contains different members, otherwise it's the same.
-    pub fn for_each_in_line_to_with_edge_detection<F>(&self, dest : Coordinate<I>, mut f : F)
-        where
-        F : FnMut((Coordinate<I>, Coordinate<I>)),
-        for <'a> &'a I: Add<&'a I, Output = I>
-        {
-            if *self == dest {
-                f((*self, *self));
-                return;
-            }
-
-            let n = self.distance(dest);
-
-            let ax = self.x.to_f32().unwrap();
-            let ay = self.y.to_f32().unwrap();
-            let bx = dest.x.to_f32().unwrap();
-            let by = dest.y.to_f32().unwrap();
-
-            for i in range_inclusive(Zero::zero(), n) {
-                let d = i.to_f32().unwrap() / n.to_f32().unwrap();
-                let x = ax + (bx - ax) * d;
-                let y = ay + (by - ay) * d;
-                let c1 = Coordinate::nearest(x + 0.000001, y + 0.000001);
-                let c2 = Coordinate::nearest(x - 0.000001, y - 0.000001);
-                f((c1, c2));
-            }
-    }
-
-    /// Construct a straight line to a `dest`
-    pub fn line_to(&self, dest : Coordinate<I>) -> Vec<Coordinate<I>>
-    where
-        for <'a> &'a I: Add<&'a I, Output = I>
-    {
-        let mut res = Vec::new();
-
-        self.for_each_in_line_to(dest, |c| {
-            res.push(c);
-        });
-
-        res
-    }
-
-    /// Construct a straight line to a `dest`
-    ///
-    /// Skip points on the border of two tiles
-    pub fn line_to_lossy(&self, dest : Coordinate<I>) -> Vec<Coordinate<I>>
-    where
-        for <'a> &'a I: Add<&'a I, Output = I>
-    {
-        let mut res = Vec::new();
-
-        self.for_each_in_line_to_lossy(dest, |c| {
-            res.push(c);
-        });
-
-        res
-    }
-
-    /// Construct a straight line to a `dest`
-    pub fn line_to_with_edge_detection(&self, dest : Coordinate<I>) -> Vec<(Coordinate<I>, Coordinate<I>)>
-    where
-        for <'a> &'a I: Add<&'a I, Output = I>
-    {
-        let mut res = Vec::new();
-
-        self.for_each_in_line_to_with_edge_detection(dest, |c| {
-            res.push(c);
-        });
-
-        res
     }
 
     /// Z coordinate
